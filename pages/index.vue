@@ -1,26 +1,28 @@
 <template>
     <section>
-        <h1>
-            EXAMPLES
-        </h1>
-        <ul class="examples">
-            <li v-for="(example, index) in examples" :key="index" class="example">
-                <nuxt-link :to="{ name: 'id', params: { id: index }}">
-                    {{ example.name }}
-                </nuxt-link>
-            </li>
-        </ul>
+        <highcharts :options="chartOptions"></highcharts>
     </section>
 </template>
 
 <script>
-import examples from '~/assets/examples.json';
+import { Chart } from 'highcharts-vue';
 
 export default {
-    data () {
-        return examples;
+    data() {
+        return {
+            chartOptions: {
+                series: [
+                    {
+                        data: [1, 2, 3] // sample data
+                    }
+                ]
+            }
+        };
     },
-    head () {
+    components: {
+        highcharts: Chart
+    },
+    head() {
         return {
             title: 'examples'
         };
