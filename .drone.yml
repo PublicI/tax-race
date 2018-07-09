@@ -51,3 +51,9 @@ pipeline:
     image: plugins/slack
     secrets: [ slack_webhook ]
     channel: data-alerts
+    template: >
+      {{#success build.status}}
+        published https://apps.publicintegrity.org/tax-race/
+      {{else}}
+        failed publishing https://apps.publicintegrity.org/tax-race/
+      {{/success}}
