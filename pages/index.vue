@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import raceBrackets from '~/assets/cpsincomebyraceandhispanicorigin.csv';
+import raceBrackets from '~/assets/cpshouseholdincome.csv';
 import taxBrackets from '~/assets/jcttaxcutsbyincomeovertime.csv';
 import { Chart } from 'highcharts-vue';
 import clone from 'lodash.clonedeep';
@@ -57,7 +57,7 @@ export default {
                 }
             },
             yAxis: {
-                tickInterval: 20,
+                tickInterval: 15,
                 gridLineWidth: 1,
                 title: {
                     text: null
@@ -101,28 +101,30 @@ export default {
             // series
         };
 
-        const raceCategories = Object.keys(raceBrackets[0]).filter(
-            cat => ['', 'Race', 'Hispanic origin'].indexOf(cat) === -1
-        ).map(cat => cat.replace(' pct',''));
+        const raceCategories = Object.keys(raceBrackets[0])
+            .filter(cat => ['', 'Race', 'Hispanic origin'].indexOf(cat) === -1)
+            .map(cat => cat.replace(' pct', ''));
 
-        const raceSeries = raceBrackets.map(row => {
-            return {
-                name: chartTitles[`${row.Race} ${row['Hispanic origin']}`],
-                data: raceCategories.map(cat => row[`${cat} pct`]*100)
-            };
-        }).filter(s => s.name);
+        const raceSeries = raceBrackets
+            .map(row => {
+                return {
+                    name: chartTitles[`${row.Race} ${row['Hispanic origin']}`],
+                    data: raceCategories.map(cat => row[`${cat} pct`] * 100)
+                };
+            })
+            .filter(s => s.name);
 
-        raceSeries.splice(1,0,raceSeries.shift());
+        raceSeries.splice(1, 0, raceSeries.shift());
 
-        let raceCharts = raceSeries.map((s) => {
+        let raceCharts = raceSeries.map(s => {
             let options = clone(chartOptions);
 
             options.title.text = s.name;
             options.series = [s];
-            options.categories = raceCategories;
+            options.xAxis.categories = raceCategories;
 
             options.yAxis.min = 0;
-            options.yAxis.max = 53;
+            options.yAxis.max = 43;
 
             return options;
         });
@@ -131,19 +133,21 @@ export default {
             cat => ['Year'].indexOf(cat) === -1
         );
 
-        const taxSeries = taxBrackets.map(row => {
-            return {
-                name: row.Year,
-                data: taxCategories.map(cat => row[cat]*100)
-            };
-        }).filter(s => s.name !== '2018');
+        const taxSeries = taxBrackets
+            .map(row => {
+                return {
+                    name: row.Year,
+                    data: taxCategories.map(cat => row[cat] * 100)
+                };
+            })
+            .filter(s => s.name !== '2018');
 
-        let taxCharts = taxSeries.map((s) => {
+        let taxCharts = taxSeries.map(s => {
             let options = clone(chartOptions);
 
             options.title.text = s.name;
             options.series = [s];
-            options.categories = taxCategories;
+            options.xAxis.categories = taxCategories;
 
             options.yAxis.min = -13;
             options.yAxis.max = 13;
