@@ -1,142 +1,176 @@
 <template>
-    <section>
-        <highcharts :options="chartOptions"></highcharts>
+    <section class="charts">
+        <div v-for="group in groups" class="group">
+            <h2></h2>
+
+            <div v-for="chart in group.charts" class="chart">
+                <highcharts :options="chart"></highcharts>
+            </div>
+        </div>
     </section>
 </template>
 
 <script>
-import data from '~/assets/indexed-means.json';
+import raceBrackets from '~/assets/cpsincomebyraceandhispanicorigin.csv';
+import taxBrackets from '~/assets/jcttaxcutsbyincomeovertime.csv';
 import { Chart } from 'highcharts-vue';
-import Highcharts from 'highcharts';
+import clone from 'lodash.clonedeep';
 
 export default {
-    methods: {
-        makeDates(floatArr) {
-            let tar = [];
-            for (let i = 0; i < floatArr.length; i++) {
-                tar[i] = Date.UTC(floatArr[i], 0, 1);
-            }
-            return tar;
-        },
-        makeSeries(mydata) {
-            const tar = [];
-            let seriesI = {};
-            seriesI.name = 'National average';
-            seriesI.data = mydata.data[0];
-            seriesI.pointStart = Date.UTC(2008, 0, 1);
-            seriesI.pointIntervalUnit = 'year';
-            seriesI.marker = { symbol: 'circle' }; //  radius: 2
-            tar.push(seriesI);
-            return tar;
-        }
-    },
     data() {
-        let dSeries = this.makeSeries(data);
-        return {
-            chartOptions: {
-                chart: {
-                    marginLeft: 50,
+        const chartTitles = {
+            'White alone Non Hispanic': 'White',
+            'Totals Hispanic': 'Hispanic',
+            'Black or African American alone Non Hispanic': 'Black',
+            'Asian alone Non Hispanic': 'Asian',
+            'Totals Totals': null,
+            'Totals Non Hispanic': null,
+            'American Indian and Alaska Native alone Non Hispanic': null,
+            'Native Hawaiian and Other Pacific Islander alone Non Hispanic': null,
+            'Two or more races Non Hispanic': null
+        };
+
+        let chartOptions = {
+            chart: {
+                type: 'column',
+                height: 140,
+                // paddingLeft: -10,
+                style: {
                     fontFamily: 'tablet-gothic-narrow'
-                },
-                colors: ['#3D7FA6'],
-                credits: {
-                    enabled: false
-                },
-                plotOptions: {
-                    series: {
-                        lineWidth: 3,
-                        marker: {
-                            radius: 3,
-                            lineWidth: 1
-                        },
-                        states: {
-                            hover: {
-                                enabled: false
-                            }
-                        }
-                    }
-                },
-                xAxis: {
-                    gridLineWidth: 0.5,
-                    max: Date.UTC(2016, 0, 1),
-                    endOnTick: true,
-                    labels: {
-                        style: {
-                            fontSize: '12px',
-                            color: '#888'
-                        }
-                    },
-                    type: 'datetime'
-                },
-                yAxis: {
-                    title: {
-                        text: ''
-                    },
-                    labels: {
-                        formatter() {
-                            return `${Highcharts.numberFormat(this.value, 0)}%`;
-                        },
-                        style: {
-                            fontSize: '12px',
-                            color: '#888'
-                        }
-                    },
-                    plotLines: [
-                        {
-                            width: 0.5,
-                            color: '#bebebe'
-                        }
-                    ]
-                },
-                tooltip: {
-                    pointFormat: '{series.name}:<b>{point.y:.1f}%</b>',
-                    crosshairs: false,
-                    enabled: false
-                },
-                legend: {
-                    enabled: false,
-                    align: 'right',
-                    verticalAlign: 'bottom',
-                    borderWidth: 0
-                },
-                series: dSeries,
+                }
+            },
+            xAxis: {
+                tickLength: 0,
+                align: 'right',
                 title: {
-                    text: '<b>... and Medicaid spending is increasing</b>',
-                    align: 'left',
-                    style: {
-                        color: '#666'
-                    }
+                    text: null
                 },
-                subtitle: {
-                    text:
-                        'Percentage of total state spending on Medicaid, including federal assistance',
-                    align: 'left',
+                labels: {
+                    enabled: false,
+                    reserveSpace: true,
+                    allowOverlap: true,
+                    step: 1,
                     style: {
-                        fontSize: '15px',
-                        color: '#666'
+                        fontSize: '12.5px',
+                        color: '#383838'
+                    }
+                }
+            },
+            yAxis: {
+                tickInterval: 20,
+                gridLineWidth: 1,
+                title: {
+                    text: null
+                },
+                labels: {
+                    format: '{value}%'
+                    // enabled: false
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                // enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                align: 'left',
+                style: {
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                    // color: '#666'
+                }
+            },
+            style: {
+                fontFamily: 'tablet-gothic-narrow'
+            },
+            plotOptions: {
+                series: {
+                    // pointWidth: 11,
+                    color: '#3D7FA6',
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
                     }
                 }
             }
+            // series
+        };
+
+        const raceCategories = Object.keys(raceBrackets[0]).filter(
+            cat => ['', 'Race', 'Hispanic origin'].indexOf(cat) === -1
+        ).map(cat => cat.replace(' pct',''));
+
+        const raceSeries = raceBrackets.map(row => {
+            return {
+                name: chartTitles[`${row.Race} ${row['Hispanic origin']}`],
+                data: raceCategories.map(cat => row[`${cat} pct`]*100)
+            };
+        }).filter(s => s.name);
+
+        raceSeries.splice(1,0,raceSeries.shift());
+
+        let raceCharts = raceSeries.map((s) => {
+            let options = clone(chartOptions);
+
+            options.title.text = s.name;
+            options.series = [s];
+            options.categories = raceCategories;
+
+            options.yAxis.min = 0;
+            options.yAxis.max = 53;
+
+            return options;
+        });
+
+        const taxCategories = Object.keys(taxBrackets[0]).filter(
+            cat => ['Year'].indexOf(cat) === -1
+        );
+
+        const taxSeries = taxBrackets.map(row => {
+            return {
+                name: row.Year,
+                data: taxCategories.map(cat => row[cat]*100)
+            };
+        }).filter(s => s.name !== '2018');
+
+        let taxCharts = taxSeries.map((s) => {
+            let options = clone(chartOptions);
+
+            options.title.text = s.name;
+            options.series = [s];
+            options.categories = taxCategories;
+
+            options.yAxis.min = -13;
+            options.yAxis.max = 13;
+
+            return options;
+        });
+
+        return {
+            groups: [
+                {
+                    charts: taxCharts
+                },
+                {
+                    charts: raceCharts
+                }
+            ]
         };
     },
     components: {
         highcharts: Chart
-    },
-    head() {
-        return {
-            title: 'examples'
-        };
     }
 };
 </script>
 
 <style scoped>
-.examples {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-.example {
-    margin: 10px 0;
+.group {
+    float: left;
+    width: 300px;
 }
 </style>

@@ -16,6 +16,7 @@ module.exports = {
         'no-unused-vars': ['warn'],
         'spaced-comment': ['warn'],
         'comma-spacing': ['warn'],
+        'no-multiple-empty-lines': ['warn'],
         'quotes': ['warn'],
         'brace-style': ['warn'],
         'indent': ['warn', 4],
