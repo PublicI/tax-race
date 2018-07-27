@@ -48,9 +48,9 @@ export default {
             series: raceSeries,
             categories: raceCategories,
             colors: [
-                '#427aa8',
-                '#fa8e1c',
                 '#e95b54',
+                '#fa8e1c',
+                '#427aa8',
                 '#6db6b2',
                 '#519e4b',
                 '#f3c73e',
