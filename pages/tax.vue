@@ -30,6 +30,8 @@ export default {
             .filter(s => s.name !== '2018');
 
         let taxChart = {
+            title: 'Wealthy get bigger breaks in tax cuts',
+            subtitle: 'Reduction in average rate by income level',
             type: null,
             series: taxSeries,
             categories: taxCategories,

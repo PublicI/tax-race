@@ -44,6 +44,8 @@ export default {
         raceSeries.splice(1, 0, raceSeries.shift());
 
         let raceChart = {
+            title: 'White people more likely to be wealthy',
+            subtitle: 'Percent of race and ethnic groups by income level',
             type: null,
             series: raceSeries,
             categories: raceCategories,

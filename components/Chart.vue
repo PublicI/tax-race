@@ -18,7 +18,9 @@ export default {
         stacked: Boolean,
         grid: Boolean,
         suffix: String,
-        colors: Array
+        colors: Array,
+        title: String,
+        subtitle: String
     },
     computed: {
         charts() {
@@ -88,12 +90,20 @@ export default {
                     enabled: false
                 },
                 title: {
-                    text: '',
+                    text: this.title,
                     align: 'left',
                     style: {
-                        fontSize: '14px',
+                        fontSize: '17px',
                         fontWeight: 'bold'
                         // color: '#666'
+                    }
+                },
+                subtitle: {
+                    text: this.subtitle,
+                    align: 'left',
+                    style: {
+                        fontSize: '15px',
+                        color: '#666'
                     }
                 },
                 plotOptions: {
