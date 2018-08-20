@@ -57,7 +57,7 @@ export default {
                         // enabled: false,
                         reserveSpace: true,
                         allowOverlap: true,
-                        step: 1,
+                        // step: 1,
                         style: {
                             fontSize: '12.5px',
                             color: '#383838'

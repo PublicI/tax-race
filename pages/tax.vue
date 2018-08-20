@@ -7,6 +7,8 @@
                 <chart v-bind="chart"></chart>
             </div>
         </div>
+        
+        <p class="source">Source: Joint Committee on Taxation and Census Bureau</p>
     </section>
 </template>
 
@@ -30,7 +32,7 @@ export default {
             .filter(s => s.name !== '2018');
 
         let taxChart = {
-            title: 'Wealthy get bigger breaks in tax cuts',
+            title: '... they get bigger tax breaks than minorities',
             subtitle: 'Reduction in average rate by income level',
             type: null,
             series: taxSeries,
@@ -64,4 +66,9 @@ export default {
     width: 300px;
 }
 */
+.source {
+    font-size: 80%;
+    color: #666;
+    line-height: 120%;
+}
 </style>

@@ -7,6 +7,8 @@
                 <chart v-bind="chart"></chart>
             </div>
         </div>
+
+        <p class="source">Source: U.S. Census Bureau</p>
     </section>
 </template>
 
@@ -44,7 +46,7 @@ export default {
         raceSeries.splice(1, 0, raceSeries.shift());
 
         let raceChart = {
-            title: 'White people more likely to be wealthy',
+            title: 'Because white people are more likely to be wealthy ...',
             subtitle: 'Percent of race and ethnic groups by income level',
             type: null,
             series: raceSeries,
@@ -81,4 +83,9 @@ export default {
     width: 300px;
 }
 */
+.source {
+    font-size: 80%;
+    color: #666;
+    line-height: 120%;
+}
 </style>
